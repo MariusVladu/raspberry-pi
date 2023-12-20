@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.1.0/css/all.css' />
+	<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css' />
+	<script src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+	<title>Buzzer control</title>
+	<style>
+		.css_on {
+			color: black;
+		}
+
+		.css_off {
+			color: lightgray;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid text-center">
+		<div class="row">
+			<div class="col-sm-12" style="color:red;font-size:7vh">
+				<p>Click/touch the button.</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<input type="button" class="btn btn-primary" id="id_button" style="font-size:7vh">
+			</div>
+		</div>
+		<br>
+		<div class='row'>
+			<div class='col-sm-12'>
+				<i id='speaker' class='fas fa-volume-up css_off' style='font-size:15vh'></i>
+			</div>
+		</div>
+		<div class='col-sm-12'>
+			<input type='range' min='31' max='6000' class='form-control-range' id='slider' />
+		</div>
+		<div class='row'>
+			<div class='col-sm-12'>
+				<h3 id='status'></h3>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$('#id_button').click(function () {
+			update_buzzer()
+		});
+
+		$('#slider').on('change', function () {
+			update_buzzer()
+		});
+
+		function update_buzzer() {
+			var speaker_is_off = $('#speaker').hasClass('css_off');
+			var frequency = $('#slider').val();
+
+			if (speaker_is_off == true) {
+				$.ajax({
+					url: '/buzzer',
+					type: 'POST',
+					data: { 'state': 'on', 'frequency': frequency },
+				});
+				$('#id_button').val('on');
+				$('#speaker').removeClass('css_off').addClass('css_on');
+			}
+			else {
+				$.ajax({
+					url: '/buzzer',
+					type: 'POST',
+					data: { 'state': 'off', 'frequency': frequency },
+				});
+				$('#id_button').val('off');
+				$('#speaker').removeClass('css_on').addClass('css_off');
+			}
+		}
+	</script>
+</body>
+
+</html>
